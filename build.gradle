@@ -1,0 +1,34 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+version = '1.0.0-SNAPSHOT'
+group = 'de.maniccode.gradle.plugins'
+
+repositories {
+    mavenCentral()
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}
+
+dependencies {
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testCompile gradleTestKit()
+	
+	compile gradleApi()
+    compileOnly 'org.codehaus.groovy:groovy-all:2.4.4'
+}
+
+configurations.testCompile.extendsFrom configurations.compileOnly
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
