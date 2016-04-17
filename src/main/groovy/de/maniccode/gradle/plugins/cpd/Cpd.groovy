@@ -1,7 +1,10 @@
 package de.maniccode.gradle.plugins.cpd;
 
+import groovy.util.slurpersupport.GPathResult
+
 import javax.inject.Inject
 
+import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.IsolatedAntBuilder
@@ -12,6 +15,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.VerificationTask
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.logging.ConsoleRenderer
 
 import de.maniccode.gradle.plugins.cpd.internal.CpdReportsImpl
 
@@ -110,6 +114,30 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 			ant.cpd(antCpdArgs) {
 				getSource().addToAntBuilder(ant, 'fileset', FileCollection.AntType.FileSet)
 			}
+		}
+		
+		def errorCount = getCpdErrorCount()
+		if (errorCount) {
+			def message = "$errorCount CPD rule violations were found."
+			def report = reports.firstEnabled
+			if (report) {
+				def reportUrl = new ConsoleRenderer().asClickableFileUrl(report.destination)
+				message += " See the report at: $reportUrl"
+			}
+			if (getIgnoreFailures()) {
+				logger.warn(message)
+			} else {
+				throw new GradleException(message)
+			}
+		}
+		
+	}
+	
+	private int getCpdErrorCount() {
+		File file = reports.xml.getDestination()
+		if (file.exists()) {
+			GPathResult result = new XmlSlurper().parse(file)
+			result.duplication.size()
 		}
 	}
 	
