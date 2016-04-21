@@ -25,5 +25,19 @@ class CpdPluginTest {
 		assertTrue(project.tasks.cpdMain instanceof Cpd)
 		assertTrue(project.tasks.cpdTest instanceof Cpd)
 	}
+	
+	@Test
+	public void cpdTaskHasCorrectInitialValues() {
+		Project project = ProjectBuilder.builder().build()
+		project.pluginManager.apply 'java'
+		project.pluginManager.apply 'cpd'
+		
+		assertEquals("The minimum token count is not set properly.", 50, project.tasks.cpdMain.minimumTokenCount)
+		assertEquals("The encoding is not set properly.", "UTF-8", project.tasks.cpdMain.encoding)
+		assertEquals("The language is not set properly.", "java", project.tasks.cpdMain.language)
+		assertFalse("The ignoreFailures property is not set properly.", project.tasks.cpdMain.ignoreFailures)
+		assertFalse("The ignoreLiterals property is not set properly.", project.tasks.cpdMain.ignoreLiterals)
+		assertFalse("The ignoreIdentifiers property is not set properly.", project.tasks.cpdMain.ignoreIdentifiers)
+	}
 
 }

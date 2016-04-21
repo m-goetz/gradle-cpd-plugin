@@ -72,9 +72,6 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 
 	Cpd() {
 		reports = instantiator.newInstance(CpdReportsImpl, this)
-		minimumTokenCount = 75
-		language = 'java'
-		encoding = 'UTF-8'
 	}
 
 	@Inject
