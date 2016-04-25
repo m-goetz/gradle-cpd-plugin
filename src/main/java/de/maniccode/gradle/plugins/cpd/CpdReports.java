@@ -13,4 +13,18 @@ public interface CpdReports extends ReportContainer<SingleFileReport> {
      * @return The cpd XML report
      */
     SingleFileReport getXml();
+
+    /**
+     * The cpd text report
+     *
+     * @return The cpd text report
+     */
+	SingleFileReport getText();
+
+	/**
+     * The cpd CSV report
+     *
+     * @return The cpd CSV report
+     */
+	SingleFileReport getCsv();
 }

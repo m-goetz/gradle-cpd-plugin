@@ -8,6 +8,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.IsolatedAntBuilder
+import org.gradle.api.reporting.Report
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
@@ -98,12 +99,12 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 	public void run() {
 		def antCpdArgs = [
 			encoding: encoding, 
-			format: 'xml', 
+			format: reports.firstEnabled.getName(),
 			ignoreLiterals: ignoreLiterals, 
 			ignoreIdentifiers: ignoreIdentifiers, 
 			language: language,
 			minimumtokencount: minimumTokenCount,
-			outputfile: reports.xml.getDestination()
+			outputfile: reports.firstEnabled.getDestination()
 		]
 
 		antBuilder.withClasspath(getPmdClasspath()).execute { a ->
@@ -131,10 +132,19 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 	}
 	
 	private int getCpdErrorCount() {
-		File file = reports.xml.getDestination()
-		if (file.exists()) {
-			GPathResult result = new XmlSlurper().parse(file)
-			result.duplication.size()
+		Report activeReport = reports.firstEnabled
+		if (activeReport.name == "xml") {
+			File file = reports.xml.getDestination()
+			if (file.exists()) {
+				GPathResult result = new XmlSlurper().parse(file)
+				result.duplication.size()
+			}
+		}
+		else if (activeReport.name == "csv") {
+			// TODO: count errors in csv file
+		}
+		else {
+			// TODO: count errors in text file
 		}
 	}
 	

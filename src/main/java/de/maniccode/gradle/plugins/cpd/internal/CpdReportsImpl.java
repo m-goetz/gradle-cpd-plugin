@@ -13,11 +13,23 @@ public class CpdReportsImpl extends TaskReportContainer<SingleFileReport> implem
 		super(SingleFileReport.class, task);
 		
 		add(TaskGeneratedSingleFileReport.class, "xml", task);
+		add(TaskGeneratedSingleFileReport.class, "text", task);
+		add(TaskGeneratedSingleFileReport.class, "csv", task);
 	}
 
 	@Override
 	public SingleFileReport getXml() {
 		return getByName("xml");
+	}
+	
+	@Override
+	public SingleFileReport getText() {
+		return getByName("text");
+	}
+	
+	@Override
+	public SingleFileReport getCsv() {
+		return getByName("csv");
 	}
 
 }
