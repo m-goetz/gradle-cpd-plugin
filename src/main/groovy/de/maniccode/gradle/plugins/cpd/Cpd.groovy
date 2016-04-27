@@ -105,14 +105,17 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 	@TaskAction
 	public void run() {
 		def antCpdArgs = [
-			encoding: encoding, 
-			format: reports.firstEnabled.getName(),
-			ignoreLiterals: ignoreLiterals, 
-			ignoreIdentifiers: ignoreIdentifiers, 
-			language: language,
-			minimumtokencount: minimumTokenCount,
-			outputfile: reports.firstEnabled.getDestination()
+			encoding: getEncoding(), 
+			format: getReports().firstEnabled.getName(),
+			ignoreLiterals: getIgnoreLiterals(), 
+			ignoreIdentifiers: getIgnoreIdentifiers(), 
+			language: getLanguage(),
+			minimumtokencount: getMinimumTokenCount(),
+			outputfile: getReports().firstEnabled.getDestination()
 		]
+		antCpdArgs.each { key, value ->
+			logger.debug("$key: $value")
+		}
 
 		antBuilder.withClasspath(getPmdClasspath()).execute { a ->
 			ant.taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask')
@@ -123,8 +126,10 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 		
 		def errorCount = getCpdErrorCount()
 		if (errorCount) {
-			def message = "$errorCount CPD rule violations were found."
-			def report = reports.firstEnabled
+			def message = errorCount > 1 ?
+					"$errorCount CPD rule violations were found." :
+					"$errorCount CPD rule violation was found."
+			def report = getReports().firstEnabled
 			if (report) {
 				def reportUrl = new ConsoleRenderer().asClickableFileUrl(report.destination)
 				message += " See the report at: $reportUrl"
@@ -138,19 +143,22 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 	}
 	
 	private int getCpdErrorCount() {
-		Report activeReport = reports.firstEnabled
+		Report activeReport = getReports().firstEnabled
 		if (activeReport.name == "xml") {
-			File file = reports.xml.getDestination()
+			File file = getReports().xml.getDestination()
 			if (file.exists()) {
 				GPathResult result = new XmlSlurper().parse(file)
 				result.duplication.size()
 			}
 		}
 		else if (activeReport.name == "csv") {
-			// TODO: count errors in csv file
+			File file = getReports().xml.getDestination()
+			// TODO: Count lines of file
+			return 0
 		}
 		else {
-			// TODO: count errors in text file
+			// TODO: Determine if errors found in txt file
+			return 0
 		}
 	}
 	

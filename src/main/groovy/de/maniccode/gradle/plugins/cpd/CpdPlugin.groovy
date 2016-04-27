@@ -61,7 +61,7 @@ public class CpdPlugin extends AbstractCodeQualityPlugin<Cpd> {
 				destination = { new File(extension.reportsDir, "${baseName}.xml") }
 			}
 			task.reports.text.conventionMapping.with {
-				destination = { new File(extension.reportsDir, "${baseName}.text") }
+				destination = { new File(extension.reportsDir, "${baseName}.txt") }
 			}
 			task.reports.csv.conventionMapping.with {
 				destination = { new File(extension.reportsDir, "${baseName}.cvs") }
