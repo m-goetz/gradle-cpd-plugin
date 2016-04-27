@@ -1,7 +1,6 @@
 package de.maniccode.gradle.plugins.cpd;
 
 import org.gradle.api.plugins.quality.CodeQualityExtension
-import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.plugins.quality.internal.AbstractCodeQualityPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.util.VersionNumber
@@ -60,6 +59,12 @@ public class CpdPlugin extends AbstractCodeQualityPlugin<Cpd> {
 			task.reports.xml.conventionMapping.with {
 				enabled = { true }
 				destination = { new File(extension.reportsDir, "${baseName}.xml") }
+			}
+			task.reports.text.conventionMapping.with {
+				destination = { new File(extension.reportsDir, "${baseName}.text") }
+			}
+			task.reports.csv.conventionMapping.with {
+				destination = { new File(extension.reportsDir, "${baseName}.cvs") }
 			}
 		}
 	}

@@ -6,10 +6,12 @@ import javax.inject.Inject
 
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.IsolatedAntBuilder
 import org.gradle.api.reporting.Report
 import org.gradle.api.reporting.Reporting
+import org.gradle.api.reporting.SingleFileReport
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.SourceTask
@@ -92,7 +94,12 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 
 	@Override
 	public CpdReports reports(Closure closure) {
-		reports.configure(closure)
+		reports.getEnabled()*.enabled = false
+		CpdReports configuredReports = reports.configure(closure)
+		NamedDomainObjectSet<SingleFileReport> set = configuredReports.getEnabled()
+		if (set.size() > 1) {
+			throw new GradleException("With cpd, you can only have one enabled report. Check if you have enabled more than one report.")
+		}
 	}
 
 	@TaskAction
@@ -128,7 +135,6 @@ public class Cpd extends SourceTask implements VerificationTask, Reporting<CpdRe
 				throw new GradleException(message)
 			}
 		}
-		
 	}
 	
 	private int getCpdErrorCount() {

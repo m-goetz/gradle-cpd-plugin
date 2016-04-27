@@ -9,11 +9,6 @@ public class CpdExtension extends CodeQualityExtension {
 	CpdExtension(Project project) {
 		this.project = project
 	}
-	
-	/**
-	 * Whether or not this task will ignore failures and continue running the build.
-	 */
-	boolean ignoreFailures
 
 	/**
 	 * Whether or not to write CPD results to {@code System.out}.
@@ -47,5 +42,5 @@ public class CpdExtension extends CodeQualityExtension {
 	/**
 	 * A positive integer indicating the minimum duplicate size.
 	 */
-	Integer minimumTokenCount = 50
+	Integer minimumTokenCount
 }

@@ -62,11 +62,11 @@ class CpdPluginTest {
 		}
 		
 		assertEquals("The reporting is not set to csv.", "csv", project.tasks.cpdMain.reports.firstEnabled.name)
+		assertTrue("There are more reports activated than one.", project.tasks.cpdMain.reports.getEnabled().size() == 1)
 	}
 	
-	// TODO: Fix test
-	@Ignore
-	public void reportsAreSetToFirstEnabled() {
+	@Test
+	public void onlyOneReportKindCanBeEnabled() {
 		Project project = ProjectBuilder.builder().build()
 		project.pluginManager.apply 'java'
 		project.pluginManager.apply 'cpd'
@@ -75,15 +75,9 @@ class CpdPluginTest {
 		project.tasks.cpdMain.reports {
 			text.enabled = true
 		}
-		project.tasks.cpdMain.reports {
-			xml.enabled = true
-		}
-		project.tasks.cpdMain.reports {
-			csv.enabled = true
-		}
 		
-		
-		assertEquals("The reporting is not set to text.", "xml", project.tasks.cpdMain.reports.firstEnabled.name)
+		assertFalse("xml report is enabled.", project.tasks.cpdMain.reports.xml.enabled)
+		assertTrue("text report is not enabled.", project.tasks.cpdMain.reports.text.enabled)
 	}
 
 }
